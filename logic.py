@@ -4,9 +4,12 @@ from dateutil.parser import parse
 import pytz
 from PyQt6 import QtWidgets
 from Google import Create_Service
+import os
 
 # ______________________ Initiate Google Tasks ______________________________
-CLIENT_SECRET_FILE = 'client_secret_file.json'
+assetsFolder = os.path.join(os.getcwd(), 'assets')
+
+CLIENT_SECRET_FILE = os.path.join(assetsFolder, 'login.json')
 API_NAME = 'tasks'
 API_VERSION = 'v1'
 SCOPES = ['https://www.googleapis.com/auth/tasks']
@@ -150,16 +153,16 @@ class lg:
         ).execute()
         return taskList
 
-    # Hàm số tasks list
+    # Hàm xóa tasks list
     def del_list_task(mainTaskListId):
         service.tasklists().delete(tasklist=mainTaskListId).execute()
 
     # Hàm lấy các Task trong mainTaskListId
-    def get_tasks(mainTaskListId):
+    def get_tasks(mainTaskListId, complete=True, hidden=True):
         response = service.tasks().list(
             tasklist=mainTaskListId,
-            showCompleted=True,
-            showHidden=True,
+            showCompleted=complete,
+            showHidden=hidden,
         ).execute()
         listItems = response.get('items')
         nextPageToken = response.get('nextPageToken')
@@ -167,13 +170,15 @@ class lg:
         while nextPageToken:
             response = service.tasks().list(
                 tasklist=mainTaskListId,
-                showCompleted=True,
-                showHidden=True,
+                showCompleted=complete,
+                showHidden=hidden,
                 pageToken=nextPageToken
             ).execute()
             listItems.extend(response.get('items'))
             nextPageToken = response.get('nextPageToken')
-        return listItems
+
+        listItems_sortPosition = sorted(listItems, key=lambda k: k['position'])
+        return listItems_sortPosition
 
     # Hàm get 1 task
     def get_task(tasklistID, taskID):
@@ -184,7 +189,7 @@ class lg:
         return response
 
     # Hàm ADD Task
-    def add_tasks(mainTaskListId, taskTitle, taskDue):
+    def add_task(mainTaskListId, taskTitle, taskDue):
         response = service.tasks().insert(
             tasklist=mainTaskListId,
             body={
@@ -195,10 +200,15 @@ class lg:
         return response
 
     # Hàm UPDATE Task
-    def update_tasks(mainTaskListId, taskID, bodyUpdate):
+    def update_task(mainTaskListId, taskID, bodyUpdate):
         response = service.tasks().update(
             tasklist=mainTaskListId,
             task=taskID,
             body=bodyUpdate
         ).execute()
         return response
+
+    # Hàm DELETE Tasks
+    def delete_task(mainTaskListId, taskId):
+        service.tasks().delete(tasklist=mainTaskListId, task=taskId).execute()
+

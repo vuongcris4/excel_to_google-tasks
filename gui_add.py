@@ -160,7 +160,7 @@ class WorkerThreadAdd(QThread):
         for taskTitle, taskDue in zip(reversed(taskTitleColumn), reversed(taskDueColumn)):
             while True:  # Tránh lỗi Quota Exceeded
                 try:
-                    lg.add_tasks(mainTaskListId=mainTaskListId,
+                    lg.add_task(mainTaskListId=mainTaskListId,
                                  taskTitle=taskTitle, taskDue=taskDue)
                     log1 = "{} / {}".format(count, totalCount)
                     # log = "{}\n Success updated! {}\n {}\n".format(log1,taskTitle,taskDue.strftime("%d/%m/%Y"))

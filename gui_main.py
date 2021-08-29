@@ -9,20 +9,40 @@ from gui_add import Ui_Form_Add
 from gui_update import Ui_Form_Update
 from logic import lg
 import pandas as pd
+import os
+import webbrowser
+
+assetsFolder = os.path.join(os.getcwd(), 'assets')
+with open(os.path.join(assetsFolder, 'urlHuongDan.txt'), encoding='utf-8') as f:
+    urlHuongDan = f.read()
+    f.close()
 
 class MyApp(QWidget):
     def __init__(self):
         super().__init__()
-        uic.loadUi('gui_main.ui', self)
-        
-        self.setWindowIcon(QIcon("icon.png"))
+        uic.loadUi(os.path.join(assetsFolder, 'gui_main.ui'), self)
+        self.setWindowIcon(QIcon(os.path.join(assetsFolder, "main.ico")))
 
+        self.DanhSachViecCanLam()
+        
+        self.reloadBtn.clicked.connect(self.DanhSachViecCanLam)
+        self.addTasks.clicked.connect(self.openWindowAdd)  # Bấm vào thì mở cửa sổ ADD
+        self.updateTasks.clicked.connect(self.openWindowUpdate)  # Bấm vào thì mở cửa sổ UPDATE
+        self.hdsdBtn.clicked.connect(self.hdsd)
+        self.logOutBtn.clicked.connect(self.logOut)
+    
+    def hdsd(self):
+        webbrowser.open(urlHuongDan)  
+
+    def logOut(self):
+        os.remove(os.path.join(assetsFolder, "file_chua_thong_tin_dang_nhap.pickle"))
+        sys.exit()
+
+    def DanhSachViecCanLam(self):
+        self.listTasks.clear()
         for listTaskName in self.GET_listTaskLists_name():    # Khởi tạo List Tasks Name
             self.listTasks.addItem(listTaskName)
         self.listTasks.installEventFilter(self)   # Tạo Context Menu "Lấy file thống kê"
-
-        self.addTasks.clicked.connect(self.openWindowAdd)  # Bấm vào thì mở cửa sổ ADD
-        self.updateTasks.clicked.connect(self.openWindowUpdate)  # Bấm vào thì mở cửa sổ UPDATE
 
     def GET_listTaskLists_name(self):
         listTaskLists = lg.get_lists_task()
