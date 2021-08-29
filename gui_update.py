@@ -72,7 +72,7 @@ class Ui_Form_Update(object):
         if check:
             lg.alert("Updated thành công!", "Thành công rồi nè <3")
         else:
-            lg.alert("Có lỗi xảy ra", "Bạn vui lòng thử lại sau hoặc liên hệ hỗ trợ nhé")
+            lg.alert("Có lỗi xảy ra", "Bạn vui lòng thử lại sau hoặc liên hệ Zalo 0707 022 703 hỗ trợ nhé")
 
     def evt_worker_update(self, log):
         self.progressLb.setText(log)
@@ -113,31 +113,33 @@ class WorkerThreadUpdate(QThread):
 
         taskTitleColumn = fill["title"]
         taskDueColumn = fill["due"]
-        taskIdColumn = list(Series(df['id']))
 
-        count=1
-        totalCount = len(taskIdColumn)
-        # Bắt đầu Update hàng loạt to Google Tasks {title, due}
-        for taskId, taskTitle, taskDue in zip(reversed(taskIdColumn), reversed(taskTitleColumn), reversed(taskDueColumn)):
-            # while True:  # Tránh lỗi Quota Exceeded
-            try:
-                response = lg.get_task(mainTaskListId,taskId)
-                response['title']=taskTitle
-                response['due']=lg.convert_VietNam_Date_Object_to_RFC(taskDue)
-                lg.update_tasks(mainTaskListId, taskId, response)
+        listItemIncomplete = lg.get_tasks(mainTaskListId, False, False)
+        for item in listItemIncomplete:
+            self.update_progress.emit("Update...")
+            lg.delete_task(mainTaskListId, item.get('id'))
 
-                log1 = "{} / {}".format(count,totalCount)
-                log = "{}\n Success updated! {}\n {}\n".format(log1,taskTitle,taskDue.strftime("%d/%m/%Y"))
-                print(log1)
-                self.update_progress.emit(log)
-            except Exception as e: 
-                print(e)
-                self.update_finish.emit(False)
-                return
-                # continue
+        count = 1
+        totalCount = len(taskTitleColumn)
+        for taskTitle, taskDue in zip(reversed(taskTitleColumn), reversed(taskDueColumn)):
+            while True:  # Tránh lỗi Quota Exceeded
+                try:
+                    lg.add_task(mainTaskListId=mainTaskListId,
+                                 taskTitle=taskTitle, taskDue=taskDue)
+                    log1 = "{} / {}".format(count, totalCount)
+                    # log = "{}\n Success updated! {}\n {}\n".format(log1,taskTitle,taskDue.strftime("%d/%m/%Y"))
+                    print(log1)
+                    self.update_progress.emit(log1)
+                except Exception as e:
+                    print(e)
+                    # log = ("Google \"quá tải\" rồi... Vui lòng đợi 18s nhé <3")
+                    log = "Đợi xíu..."
+                    self.update_progress.emit(log)
+                    time.sleep(18)
+                    continue
+                break
             count += 1
-        # Update Thành công
-        
+
         self.update_finish.emit(True)
 
 if __name__ == "__main__":

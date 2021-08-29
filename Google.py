@@ -16,7 +16,8 @@ def Create_Service(client_secret_file, api_name, api_version, *scopes):
 
     cred = None
 
-    pickle_file = f'token_{API_SERVICE_NAME}_{API_VERSION}.pickle'
+    pickle_file = 'file_chua_thong_tin_dang_nhap.pickle'
+    pickle_file = os.path.join(os.getcwd(), 'assets', pickle_file)
     # print(pickle_file)
 
     if os.path.exists(pickle_file):
