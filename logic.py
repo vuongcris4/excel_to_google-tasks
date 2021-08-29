@@ -199,14 +199,14 @@ class lg:
         ).execute()
         return response
 
-    # Hàm UPDATE Task
-    def update_task(mainTaskListId, taskID, bodyUpdate):
-        response = service.tasks().update(
-            tasklist=mainTaskListId,
-            task=taskID,
-            body=bodyUpdate
-        ).execute()
-        return response
+    # # Hàm UPDATE Task
+    # def update_task(mainTaskListId, taskID, bodyUpdate):
+    #     response = service.tasks().update(
+    #         tasklist=mainTaskListId,
+    #         task=taskID,
+    #         body=bodyUpdate
+    #     ).execute()
+    #     return response
 
     # Hàm DELETE Tasks
     def delete_task(mainTaskListId, taskId):
