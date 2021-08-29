@@ -1,0 +1,10 @@
+/.qt_for_python
+/build
+/client_secret_file.json
+/dist
+/Excel to Google Tasks
+/Excel_to_Google_Tasks.py
+/quickstart.py
+/token_tasks_v1.pickle
+/Toán thầy Chí test.xlsx
+/__pycache__
