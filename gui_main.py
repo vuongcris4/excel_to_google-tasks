@@ -1,3 +1,5 @@
+# pyinstaller gui_main.py --onefile --noconsole --icon="assets\main.ico"
+
 import sys
 import time
 from PyQt6 import QtWidgets
