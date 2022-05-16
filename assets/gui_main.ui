@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Excel to Google Tasks v1.1 by vuongcris4</string>
+   <string>Excel to Google Tasks v1.2 by vuongcris4</string>
   </property>
   <widget class="QPushButton" name="updateTasks">
    <property name="enabled">
